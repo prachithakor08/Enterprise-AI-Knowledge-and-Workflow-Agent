@@ -18,6 +18,9 @@ public class Document {
 
     private String filePath;
 
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     public Document() {
     }
 
@@ -62,5 +65,13 @@ public class Document {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

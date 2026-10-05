@@ -5,7 +5,12 @@ import com.enterprise.aiagent.service.DocumentService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.enterprise.aiagent.entity.DocumentChunk;
+import com.enterprise.aiagent.repository.DocumentChunkRepository;
+import com.enterprise.aiagent.service.EmbeddingService;
+
 import java.io.IOException;
+import org.apache.tika.exception.TikaException;
 
 import java.util.List;
 
@@ -16,8 +21,22 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    public DocumentController(DocumentService documentService) {
+    private final DocumentChunkRepository documentChunkRepository;
+    private final EmbeddingService embeddingService;
+
+    public DocumentController(
+            DocumentService documentService,
+            DocumentChunkRepository documentChunkRepository,
+            EmbeddingService embeddingService) {
+
         this.documentService = documentService;
+        this.documentChunkRepository = documentChunkRepository;
+        this.embeddingService = embeddingService;
+    }
+
+    @GetMapping("/chunks")
+    public List<DocumentChunk> getAllChunks() {
+        return documentChunkRepository.findAll();
     }
 
     @PostMapping
@@ -33,8 +52,24 @@ public class DocumentController {
     @PostMapping("/upload")
     public Document uploadDocument(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("title") String title) throws IOException {
+            @RequestParam("title") String title)
+            throws IOException, TikaException{
 
         return documentService.uploadDocument(file, title);
+    }
+
+    @PostMapping("/extract-text")
+    public String extractText(@RequestParam("file") MultipartFile file)
+            throws IOException, TikaException {
+
+        return documentService.extractText(file);
+    }
+
+    @PostMapping("/generate-embeddings")
+    public String generateEmbeddings() {
+
+        embeddingService.generateEmbeddings();
+
+        return "Embeddings generated successfully!";
     }
 }

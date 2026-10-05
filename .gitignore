@@ -33,3 +33,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+models/
+*.onnx
+target/
+org/
+
